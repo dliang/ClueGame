@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.swing.*;
 
 public class ClueGame extends JFrame {
-	
+	//did it work
 	public ClueGame() {		
 		JMenuBar menuBar = new JMenuBar();		
 		setSize(new Dimension(1000, 1000));
