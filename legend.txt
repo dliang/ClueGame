@@ -1,0 +1,11 @@
+W, Walkway
+H, Blackjack Room
+G, Games Room
+Z, Zoo
+P, Parlour
+B, Bowling Alley
+C, Cloak Room
+L, Larder
+X, Closet
+D, Dugout
+R, McDonalds
