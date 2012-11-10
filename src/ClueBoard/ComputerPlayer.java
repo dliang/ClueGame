@@ -14,15 +14,15 @@ import ClueBoard.Card.CardType;
 public class ComputerPlayer extends Player{
 	
 	private int lastRoom = 0;
+	private Board board;
 	//private ArrayList<Card> deck;
-
+	ArrayList<Card>deck;
 	
 	
-	private ArrayList<Card> seenCards = new ArrayList<Card>();
-	
-	public ComputerPlayer(String name, String color, int location, BoardCell cell) {
+	public ComputerPlayer(String name, String color, int location, BoardCell cell,Board board) {
 		super(name, color, location);
-		
+		this.board = board;
+		 deck = this.board.getAllCards();
 		// TODO Auto-generated constructor stub
 	}
 	/*
@@ -52,7 +52,7 @@ public class ComputerPlayer extends Player{
 		return result;
 		
 	}*/
-	public BoardCell pickLocation(Board board) {
+	public BoardCell pickLocation() {
 		ArrayList<BoardCell> doorInRange = new ArrayList<BoardCell>();
 		ArrayList<BoardCell> tempTargets = new ArrayList<BoardCell>(board.getTargets());
 		for(BoardCell b : tempTargets){
@@ -90,10 +90,9 @@ public class ComputerPlayer extends Player{
 			x++;
 		}
 	}*/
-	public ArrayList<Card> createSuggestion(Board board) {
-		ArrayList<Card> suggestion = new ArrayList<Card>();
-		updateSeen();		
-		ArrayList<Card>deck = board.getAllCards();
+	public ArrayList<Card> createSuggestion() {
+		ArrayList<Card> suggestion = new ArrayList<Card>();	
+		
 		long seed = System.nanoTime();		
 		Collections.shuffle(deck, new Random(seed));
 		
@@ -118,7 +117,7 @@ public class ComputerPlayer extends Player{
 		enteredRoom = false;
 		return suggestion;
 	}
-	
+	/*
 	public void updateSeen() {
 		for (Card i : myCards) {
 			if (!seenCards.contains(i)) {
@@ -127,14 +126,12 @@ public class ComputerPlayer extends Player{
 			}
 		}		
 	}
-	public void takeTurn(Board board){
+	*/
+	public void takeTurn(){
 		if(enteredRoom){
-			createSuggestion();
-			
+			board.handleSuggestion(createSuggestion(),this);			
 		}else{
-			move(board,pickLocation)
-		}
-
-		
+			move(board,pickLocation());
+		}		
 	}
 }

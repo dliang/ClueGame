@@ -17,19 +17,29 @@ public class Card {
 		return name;
 	}
 	
-	
+	/*
 	public boolean equals(Card card) {
 		if (name.equals(card.getCardName())){
 			return true;
 		}
 		return false;
 	}
-
+	*/
 	public CardType getCardtype() {
 		return cardtype;
 	}
 
 	public void setCardtype(CardType cardtype) {
 		this.cardtype = cardtype;
-	}		
+	}
+	@Override 
+	public boolean equals(Object o){
+		if(o instanceof Card){
+			Card tempCard = (Card)o;
+			if(name.equals(tempCard.getCardName())){
+				return true;
+			}
+		}
+		return false;
+	}
 }

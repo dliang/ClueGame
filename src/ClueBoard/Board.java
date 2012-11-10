@@ -166,7 +166,7 @@ public class Board extends JPanel{
 			if (x == 0)
 				players.add(new HumanPlayer(line[0], line[1], Integer.parseInt(line[2])));
 			else
-				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2]))));
+				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
 			x++;
 		}
 		reader.close();
@@ -476,8 +476,30 @@ public class Board extends JPanel{
 		return false;
 	}
 	
-	public void handleSuggestion(String person, String room, String weapon) {
+	public Card handleSuggestion(ArrayList<Card> suggestion,Player suggester) {
 		
+		
+		ArrayList<Player> tempPlayers = new ArrayList<Player>(players);
+		ArrayList<Card> possibleReturns = new ArrayList<Card>();
+		tempPlayers.remove(suggester);
+		Collections.shuffle(tempPlayers);
+		for(Player p : tempPlayers){
+			if(p.getMyCards().contains(suggestion.get(0))){
+				possibleReturns.add(suggestion.get(0));
+			}
+			if(p.getMyCards().contains(suggestion.get(1))){
+				possibleReturns.add(suggestion.get(1));
+			}
+			if(p.getMyCards().contains(suggestion.get(2))){
+				possibleReturns.add(suggestion.get(2));
+			}
+			if(possibleReturns.size() >0){
+				Collections.shuffle(possibleReturns);
+				unseenCards.remove(possibleReturns.get(0));
+				return possibleReturns.get(0);
+			}
+		}
+		return null;
 	}
 	
 	public void setPlayers(ArrayList<Player> player) {

@@ -209,7 +209,7 @@ public class GameSetupTests {
 	
 		@Test
 		public void testDisproveSuggestion1() {
-			ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 5, board.getCellAt(5));
+			ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 5, board.getCellAt(5),board);
 			//give player 2 of each card
 	        player.addCard(mrsPeacockCard);
 	        player.addCard(mustardCard);
@@ -230,7 +230,7 @@ public class GameSetupTests {
 	        int tot_Room = 0;
 	        int tot_Weapon = 0;
 	        int tot_Person = 0;
-	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 5, board.getCellAt(5));
+	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 5, board.getCellAt(5),board);
 	        
 	        player.addCard(profPlumCard);
 	        player.addCard(knifeCard);
@@ -265,21 +265,21 @@ public class GameSetupTests {
 	        hplayer.addCard(mrsWhiteCard);
 	        players.add(hplayer);
 	        
-	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 0, board.getCellAt(0));
+	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 0, board.getCellAt(0),board);
 	        player.addCard(profPlumCard);
 	        player.addCard(dugoutCard);
 	        player.addCard(ropeCard);
 	        player.addCard(zooCard);
 	        players.add(player);
 	        
-	        player = new ComputerPlayer("Mr. Green", "GREEN", 176, board.getCellAt(176));
+	        player = new ComputerPlayer("Mr. Green", "GREEN", 176, board.getCellAt(176),board);
 	        player.addCard(missScarletCard);
 	        player.addCard(wrenchCard);
 	        player.addCard(revolverCard);
 	        player.addCard(parlourCard);
 	        players.add(player);
 	        
-	        player = new ComputerPlayer("Colonel Mustard", "ORANGE", 50, board.getCellAt(50));
+	        player = new ComputerPlayer("Colonel Mustard", "ORANGE", 50, board.getCellAt(50),board);
 	        player.addCard(mrsPeacockCard);
 	        player.addCard(pipeCard);
 	        player.addCard(gamesCard);
@@ -360,21 +360,21 @@ public class GameSetupTests {
 	        hplayer.addCard(mrsWhiteCard);
 	        players.add(hplayer);
 	        
-	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 0, board.getCellAt(0));
+	        ComputerPlayer player = new ComputerPlayer("Mrs. White", "WHITE", 0, board.getCellAt(0),board);
 	        player.addCard(profPlumCard);
 	        player.addCard(dugoutCard);
 	        player.addCard(ropeCard);
 	        player.addCard(zooCard);
 	        players.add(player);
 	        
-	        player = new ComputerPlayer("Mr. Green", "GREEN", 176, board.getCellAt(176));
+	        player = new ComputerPlayer("Mr. Green", "GREEN", 176, board.getCellAt(176),board);
 	        player.addCard(missScarletCard);
 	        player.addCard(wrenchCard);
 	        player.addCard(revolverCard);
 	        player.addCard(parlourCard);
 	        players.add(player);
 	        
-	        player = new ComputerPlayer("Colonel Mustard", "ORANGE", 50, board.getCellAt(50));
+	        player = new ComputerPlayer("Colonel Mustard", "ORANGE", 50, board.getCellAt(50),board);
 	        player.addCard(mrsPeacockCard);
 	        player.addCard(pipeCard);
 	        player.addCard(gamesCard);
