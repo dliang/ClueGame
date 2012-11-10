@@ -72,7 +72,7 @@ public class GameSetupTests {
 		
 		//test computer player
 		Assert.assertEquals("Colonel Mustard", board.getPlayer(1).getName());
-		Assert.assertEquals("brown", board.getPlayer(1).getColor());
+		Assert.assertEquals("orange", board.getPlayer(1).getColor());
 		Assert.assertEquals(board.calcIndex(7, 24), board.getPlayer(1).getLocation());
 	}
 	
@@ -183,7 +183,7 @@ public class GameSetupTests {
 		// Run the test 100 times
 		for (int i=0; i<100; i++) {
 			board.calcTargets(board.calcIndex(6, 0), 2);
-			BoardCell selected = (BoardCell) test_player.pickLocation(board.getTargets(), board.getCellList());
+			BoardCell selected = (BoardCell) test_player.pickLocation(board);
 
 			if (selected == board.getCellAt(board.calcIndex(4, 0)))
 				loc_4_0Tot++;
@@ -384,7 +384,7 @@ public class GameSetupTests {
 	        board.setPlayers(players);
 			
 	        ComputerPlayer p1 = (ComputerPlayer)players.get(1);
-	        p1.createDeck("cards.txt");
+	       // p1.createDeck("cards.txt");
 	        
 	        int mustard = 0;
 	        int bowling = 0;

@@ -14,23 +14,25 @@ import ClueBoard.Card.CardType;
 public class ComputerPlayer extends Player{
 	
 	private int lastRoom = 0;
-	private ArrayList<Card> deck;
+	//private ArrayList<Card> deck;
 
 	
-
-	private char lastRoomVisted;
+	
 	private ArrayList<Card> seenCards = new ArrayList<Card>();
 	
 	public ComputerPlayer(String name, String color, int location, BoardCell cell) {
 		super(name, color, location);
+		
 		// TODO Auto-generated constructor stub
 	}
-	
+	/*
 	public void move(int cell) {
 		lastRoom = getLocation();
-	}
+		
+	}*/
 	
-	public BoardCell pickLocation(HashSet<BoardCell> hashSet, ArrayList<BoardCell> cells) {
+	/*
+	public BoardCell pickLocation(HashSet<BoardCell> hashSet, ArrayList<BoardCell> cells) {//hashSet is the calculated targets
 		int i = 0;
 		Random rand = new Random();
 		int target = rand.nextInt(hashSet.size());
@@ -38,7 +40,7 @@ public class ComputerPlayer extends Player{
 		BoardCell result = null;
 			
 		for (BoardCell key : hashSet) {
-			if (key.isDoorway())
+			if (key.isDoorway() && key.)
 				return key;
 			if (i == target) {
 				result = key;
@@ -48,12 +50,29 @@ public class ComputerPlayer extends Player{
 		}
 		
 		return result;
-	}
+		
+	}*/
+	public BoardCell pickLocation(Board board) {
+		ArrayList<BoardCell> doorInRange = new ArrayList<BoardCell>();
+		ArrayList<BoardCell> tempTargets = new ArrayList<BoardCell>(board.getTargets());
+		for(BoardCell b : tempTargets){
+			if(b.isDoorway() && ((RoomCell)b).getRoomInitial() != lastRoomVisited){
+				doorInRange.add(b);
+			}
+		}
+		if(doorInRange.size() > 0){
+			Collections.shuffle(doorInRange);
+			return doorInRange.get(0);
+		}else{
+			Collections.shuffle(tempTargets);
+			return tempTargets.get(0);
+		}
 	
+	}
 	public int getLocation() {
 		return location;
 	}
-	
+	/*
 	public void createDeck(String inputFile) throws FileNotFoundException {
 		int x = 1;
 		FileReader reader = new FileReader(inputFile);
@@ -70,11 +89,11 @@ public class ComputerPlayer extends Player{
 			}
 			x++;
 		}
-	}
-	public ArrayList<Card> createSuggestion() {
+	}*/
+	public ArrayList<Card> createSuggestion(Board board) {
 		ArrayList<Card> suggestion = new ArrayList<Card>();
 		updateSeen();		
-		
+		ArrayList<Card>deck = board.getAllCards();
 		long seed = System.nanoTime();		
 		Collections.shuffle(deck, new Random(seed));
 		
@@ -96,6 +115,7 @@ public class ComputerPlayer extends Player{
 				c++;
 			} 
 		}
+		enteredRoom = false;
 		return suggestion;
 	}
 	
@@ -105,8 +125,16 @@ public class ComputerPlayer extends Player{
 				seenCards.add(i);
 				deck.remove(i);
 			}
+		}		
+	}
+	public void takeTurn(Board board){
+		if(enteredRoom){
+			createSuggestion();
+			
+		}else{
+			move(board,pickLocation)
 		}
-		
+
 		
 	}
 }

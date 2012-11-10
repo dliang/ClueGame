@@ -30,7 +30,10 @@ public class Board extends JPanel{
 	private int numColumns;
 	private int startPosition=-1;
 	private int GUI_COMP_SIZE = 30;
+	private int curTurn = 0;
+	private int diceRoll;
 
+	
 	
 	private Map<Integer, LinkedList<Integer>> adjMtx = new HashMap<Integer, LinkedList<Integer>>();
 	private Stack<Integer> path = new Stack<Integer>();
@@ -41,6 +44,8 @@ public class Board extends JPanel{
 	//*********************************************************
 	private Solution sol;
 	private ArrayList<Player> players;
+	private ArrayList<Card> allCards;
+	private ArrayList<Card> unseenCards;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> solution = new ArrayList<Card>();
 
@@ -50,11 +55,19 @@ public class Board extends JPanel{
 		}catch(Exception e){
 			System.out.println(e.getMessage());			
 		}
+		unseenCards = new ArrayList<Card>(allCards);
 		setBackground (Color.black); 
 		
 		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 	}	
+	
+	public int nextTurn(){
+		players.get(curTurn).takeTurn();
+		curTurn = (curTurn+1)%players.size();
+		return 0;
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for(BoardCell b : cells){
@@ -73,7 +86,17 @@ public class Board extends JPanel{
 		}
 	}
 	
-	
+	public int getDiceRoll(){
+		return diceRoll;
+	}
+	public int rollDice(){
+		Random randomGen = new Random();
+		diceRoll = randomGen.nextInt(5)+1;
+		return diceRoll;
+	}
+	public ArrayList<Card> getAllCards(){
+		return allCards;
+	}
 	public void loadConfigFiles(String config, String legend, String people, String deck) throws IOException, BadConfigFormatException {
 		rooms = new TreeMap<Character,String>();
 		cells = new ArrayList<BoardCell>();
@@ -382,7 +405,7 @@ public class Board extends JPanel{
 		//shuffle player cards
 		long seed = System.nanoTime();		
 		Collections.shuffle(cards, new Random(seed));
-		
+		allCards = new ArrayList<Card>(cards);
 		
 		//put answer into solution, remove solution cards from deck 
 		int a = 0, b = 0, c = 0;

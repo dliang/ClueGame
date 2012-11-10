@@ -15,7 +15,9 @@ public abstract class Player {
 	protected String color;
 	protected Random rand = new Random();
 	protected BoardCell lastRoom;
-	
+	protected char currentRoom;
+	protected char lastRoomVisited;
+	protected boolean enteredRoom;
 	public Player (String name, String color, int location ) {
 		this.name = name;
 		this.color = color;
@@ -91,4 +93,14 @@ public abstract class Player {
 		g.fillOval(column*size, row*size, size-1, size-1);
 		
 	}
+	public void move(Board board,BoardCell to){
+		if(board.getCellAt(location).isDoorway()){
+			lastRoomVisited = ((RoomCell)board.getCellAt(location)).getRoomInitial();
+		}
+		location = board.calcIndex(to.getRow(), to.getCol());
+		if(board.getCellAt(location).isDoorway()){
+			enteredRoom = true;
+		}
+	}
+	public abstract void takeTurn();
 }
