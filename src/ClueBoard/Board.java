@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ClueBoard.RoomCell.DoorDirection;
@@ -50,6 +51,9 @@ public class Board extends JPanel{
 			System.out.println(e.getMessage());			
 		}
 		setBackground (Color.black); 
+		
+		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
+		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 	}	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
