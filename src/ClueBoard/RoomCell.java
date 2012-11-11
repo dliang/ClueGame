@@ -46,7 +46,7 @@ public class RoomCell extends BoardCell {
 			return false;
 		}
 	}
-	
+	@Override
 	public char getRoomInitial() {
 		return roomInitial;
 	}

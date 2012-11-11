@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -34,10 +35,10 @@ public class Board extends JPanel{
 	private int diceRoll;
 
 	
-	
+	private boolean[] seen;
 	private Map<Integer, LinkedList<Integer>> adjMtx = new HashMap<Integer, LinkedList<Integer>>();
 	private Stack<Integer> path = new Stack<Integer>();
-	private Set<Integer> targets = new HashSet<Integer>();
+	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	private Stack<Integer> doorsFound = new Stack<Integer>();
 	private Stack<Integer> removed = new Stack<Integer>();
 	
@@ -48,8 +49,10 @@ public class Board extends JPanel{
 	private ArrayList<Card> unseenCards;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> solution = new ArrayList<Card>();
-
+	private Map<Integer, LinkedList<Integer>> adjLST;
+	
 	public Board(String config, String legend, String people, String deck,int compSize){
+		adjLST = new HashMap<Integer, LinkedList<Integer>>();
 		GUI_COMP_SIZE = compSize;
 		try{
 			loadConfigFiles(config,legend,people,deck);
@@ -59,14 +62,18 @@ public class Board extends JPanel{
 		deal();
 		unseenCards = new ArrayList<Card>(allCards);
 		setBackground (Color.black); 
-		
+		calcAdjacencies();
 		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 	}	
 	
 	public void nextTurn(){
+	//	System.out.println(players.get(curTurn).getColor());
+	//	printTargets();
+	//	System.out.println(players.get(curTurn).enteredRoom);
 		players.get(curTurn).takeTurn();
 		curTurn = (curTurn+1)%players.size();
+		repaint();
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -237,6 +244,7 @@ public class Board extends JPanel{
 	}
 	
 	//calculate adjacency list for a specific cell
+	/*
 	public void calcAdjacencies(int row, int col){
 	
 		LinkedList<Integer> list = new LinkedList<Integer>();
@@ -300,16 +308,85 @@ public class Board extends JPanel{
 			}
 		}
 	}
-	
+	*/
+	public void calcAdjacencies() {
+		LinkedList<Integer> tempList = new LinkedList<Integer>();
+		for (int i=0; i<numRows; i++){
+			for (int j=0; j<numColumns; j++){
+				if(cells.get(calcIndex(i, j)).isWalkway()) {
+					if (i-1>=0){
+						if(cells.get(calcIndex(i - 1, j)).isWalkway()) {
+							tempList.addLast(this.calcIndex(i-1, j));
+						}  else if(cells.get(calcIndex(i -1, j)).isDoorway()){
+							 RoomCell a = (RoomCell)cells.get(calcIndex(i - 1, j));
+							 if(a.getDoorDirection() == DoorDirection.DOWN) {
+								 tempList.addLast(this.calcIndex(i -1, j));
+							 }
+						 }
+					} 
+					if (i+1<numRows){
+						if(cells.get(calcIndex(i + 1, j)).isWalkway()) {
+							tempList.addLast(this.calcIndex(i+1, j));
+						} else if(cells.get(calcIndex(i + 1, j)).isDoorway()){
+							 RoomCell a = (RoomCell)cells.get(calcIndex(i + 1, j));
+							 if(a.getDoorDirection() == DoorDirection.UP) {
+								 tempList.addLast(this.calcIndex(i + 1, j));
+							 }
+						 }
+					}
+					if (j-1>=0){
+						 if(cells.get(calcIndex(i, j - 1)).isWalkway()) {
+							tempList.addLast(this.calcIndex(i, j-1));
+						 } else if(cells.get(calcIndex(i, j - 1)).isDoorway()){
+							 RoomCell a = (RoomCell)cells.get(calcIndex(i, j - 1));
+							 if(a.getDoorDirection() == DoorDirection.RIGHT) {
+								 tempList.addLast(this.calcIndex(i, j-1));
+							 }
+						 }
+					}
+					if (j+1<numColumns){
+						 if(cells.get(calcIndex(i, j + 1)).isWalkway()) {
+							tempList.addLast(this.calcIndex(i, j+1));
+						 } else if(cells.get(calcIndex(i, j + 1)).isDoorway()){
+							 RoomCell a = (RoomCell)cells.get(calcIndex(i, j + 1));
+							 if(a.getDoorDirection() == DoorDirection.LEFT) {
+								 tempList.addLast(this.calcIndex(i, j+1));
+							 }
+						 }
+					}
+				} else if((cells.get(calcIndex(i, j)).isRoom()) && (cells.get(calcIndex(i, j)).isDoorway())) {
+						RoomCell a = (RoomCell)cells.get(calcIndex(i, j));
+						if(cells.get(calcIndex(i, j)).isDoorway()) {
+							if(a.getDoorDirection() == DoorDirection.RIGHT) {
+								tempList.addLast(this.calcIndex(i, j + 1));
+							}
+							if(a.getDoorDirection() == DoorDirection.LEFT) {
+								tempList.addLast(this.calcIndex(i, j - 1));
+							}
+							if(a.getDoorDirection() == DoorDirection.UP) {
+								tempList.addLast(this.calcIndex(i - 1, j));
+							}
+							if(a.getDoorDirection() == DoorDirection.DOWN) {
+								tempList.addLast(this.calcIndex(i + 1, j));
+							}
+						}
+					} else {
+						adjLST.put(this.calcIndex(i,j), tempList);
+					}
+				for (Integer k : tempList){
+						adjLST.put(this.calcIndex(i, j), tempList);
+				}
+				tempList = new LinkedList<Integer>();
+			}
+		}
+	}
 	//***************************
 	public void printTargets() {
-		Set<BoardCell> test = new HashSet<BoardCell>();
-		calcTargets(calcIndex(6, 0), 2);
-		
-		for (Integer key : targets)
-			System.out.println(key);
+		for(BoardCell b : targets){
+			System.out.println(calcIndex(b.getRow(),b.getCol()));
+		}
 	}
-
+/*
 	//calculate targets for given cell index and number of steps.
 	public void calcTargets(int position, int steps){
 
@@ -351,8 +428,51 @@ public class Board extends JPanel{
 	public void clearTargets(){
 		targets.clear();
 	}
+	*/
 	
-	public HashSet<BoardCell> getTargets(){
+	public void calcTargets(int vertex, int steps) {
+		int start = vertex;
+		targets = new HashSet<BoardCell>();
+		seen = new boolean[numRows*numColumns];
+		this.setSeen();
+		seen[start]=true;
+		LinkedList<Integer> path = new LinkedList<Integer>();
+		this.recurseTargets(start, path, steps);
+	}
+
+	private void setSeen(){
+		for (int i=0; i<numRows*numColumns; i++){
+			seen[i]=false;
+		}
+	}
+
+	private void recurseTargets(int target, LinkedList<Integer> path, int steps){
+		LinkedList<Integer> tempAdj=new LinkedList<Integer>();
+		ListIterator<Integer> itr = this.getAdjList(target).listIterator();
+		while (itr.hasNext()){
+			int next=itr.next();
+			if (seen[next]==false){
+				tempAdj.add(next);
+			}
+		}
+		ListIterator<Integer> itrAdj = tempAdj.listIterator();
+		while (itrAdj.hasNext()){
+			int nextNode=itrAdj.next();
+			seen[nextNode]=true;
+			path.push(nextNode);
+			if (path.size() == steps){
+				targets.add(cells.get(nextNode));
+			} else if (cells.get(nextNode).isDoorway()) {
+				targets.add(cells.get(nextNode));
+			} else {
+				recurseTargets(nextNode, path, steps);
+			}
+			path.removeLast();
+			seen[nextNode]=false;
+		}
+	}
+	public Set<BoardCell> getTargets(){
+		/*
 		startPosition=-1;
 		Set<BoardCell> temp = new HashSet<BoardCell>();
 		//path.clear();
@@ -375,10 +495,12 @@ public class Board extends JPanel{
 		
 		path.clear();
 		targets.clear();
-		return (HashSet<BoardCell>) temp;
+		return (HashSet<BoardCell>) temp;*/
+		return targets;
 	}
 	
 	//gets the adjacency list for a cell
+	/*
 	public LinkedList<Integer> getAdjList(int location){
 		//Check if tile is in a room
 		if(!cells.get(location).isDoorway() && cells.get(location).isRoom()){
@@ -388,7 +510,11 @@ public class Board extends JPanel{
 		calcAdjacencies(getRowCol(location)[1],getRowCol(location)[0]);
 		return adjMtx.get(location);
 	}
-	
+	*/
+	public LinkedList<Integer> getAdjList(int index) {
+		LinkedList<Integer> a = new LinkedList<Integer> (adjLST.get(index));
+		return a;
+	}
 
 	//returns the row and column of an index contained in an array, where a[0] = column, a[1] = row
 	public int[] getRowCol(double testIndex){
@@ -529,36 +655,7 @@ public class Board extends JPanel{
 		return players;
 	}
 	
-/*	public static void main(String[] args) throws IOException, BadConfigFormatException {
-		Board board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");
 
-		board.deal();
-	//	board.printPlayerCards();
-		board.printTargets();
-		
-		ComputerPlayer test_player = (ComputerPlayer) board.getPlayer(1);
-		board.calcTargets(board.calcIndex(6, 0), 2);
-		int loc_5_1Tot = 0;
-		int loc_4_0Tot = 0;
-		int loc_6_2Tot = 0;
-		// Run the test 100 times
-		for (int i=0; i<100; i++) {
-			BoardCell selected = (BoardCell) test_player.pickLocation(board.getTargets(), board.getCellList());
-
-			if (selected == board.getCellAt(board.calcIndex(4, 0)))
-				loc_4_0Tot++;
-			else if (selected == board.getCellAt(board.calcIndex(5, 1)))
-				loc_5_1Tot++;
-			else if	(selected == board.getCellAt(board.calcIndex(6, 2)))
-				loc_6_2Tot++;
-			else
-				fail("Invalid target selected");
-		}
-		
-		System.out.println("o, 3: " + loc_5_1Tot);
-		System.out.println("4, 0: " + loc_4_0Tot);
-		System.out.println("6, 2: " + loc_6_2Tot);
-	}*/
 }
 
 

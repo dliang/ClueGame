@@ -7,7 +7,9 @@ public abstract class BoardCell {
 	protected int column;
 	
 
-	
+	public char getRoomInitial(){
+		return ';';
+	}
 	public boolean isWalkway() {
 		return false;
 	}

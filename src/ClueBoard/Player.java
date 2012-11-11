@@ -17,7 +17,7 @@ public abstract class Player {
 	protected BoardCell lastRoom;
 	protected char currentRoom;
 	protected char lastRoomVisited;
-	protected boolean enteredRoom;
+	public boolean enteredRoom;
 	public Player (String name, String color, int location ) {
 		this.name = name;
 		this.color = color;
@@ -94,12 +94,10 @@ public abstract class Player {
 		
 	}
 	public void move(Board board,BoardCell to){
-		if(board.getCellAt(location).isDoorway()){
-			lastRoomVisited = ((RoomCell)board.getCellAt(location)).getRoomInitial();
-		}
 		location = board.calcIndex(to.getRow(), to.getCol());
 		if(board.getCellAt(location).isDoorway()){
 			enteredRoom = true;
+			lastRoomVisited = ((RoomCell)board.getCellAt(location)).getRoomInitial();
 		}
 	}
 	public abstract void takeTurn();
