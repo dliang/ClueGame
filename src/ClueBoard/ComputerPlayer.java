@@ -15,6 +15,7 @@ public class ComputerPlayer extends Player{
 	
 	private int lastRoom = 0;
 	private Board board;
+	ArrayList<Card> myUnseenCards;
 	//private ArrayList<Card> deck;
 
 	
@@ -22,6 +23,7 @@ public class ComputerPlayer extends Player{
 	public ComputerPlayer(String name, String color, int location, BoardCell cell,Board board) {
 		super(name, color, location);
 		this.board = board;
+		myUnseenCards = new ArrayList<Card>();
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -51,7 +53,7 @@ public class ComputerPlayer extends Player{
 	
 	public ArrayList<Card> createAccusation() {
 		ArrayList<Card> suggestion = new ArrayList<Card>();	
-		ArrayList<Card> deck = board.getUnseenCards();
+		ArrayList<Card> deck = myUnseenCards;
 		long seed = System.nanoTime();		
 		Collections.shuffle(deck, new Random(seed));
 		
@@ -78,7 +80,8 @@ public class ComputerPlayer extends Player{
 	}
 	public ArrayList<Card> createSuggestion() {
 		ArrayList<Card> suggestion = new ArrayList<Card>();	
-		ArrayList<Card> deck = board.getUnseenCards();
+		ArrayList<Card> deck = new ArrayList<Card>(myUnseenCards);
+		
 		long seed = System.nanoTime();		
 		Collections.shuffle(deck, new Random(seed));
 		
@@ -112,8 +115,12 @@ public class ComputerPlayer extends Player{
 	}
 	
 	public void takeTurn(){
+		myUnseenCards = new ArrayList<Card>(board.getUnseenCards());
+		for(Card asd : myCards){
+			myUnseenCards.remove(asd);
+		}
 		Random randomGen = new Random();
-		boolean jAccuse = 27.0/Math.pow(board.getUnseenCards().size(),3)>= randomGen.nextDouble();
+		boolean jAccuse = 27.0/Math.pow(myUnseenCards.size(),3) >= randomGen.nextDouble();
 		if(jAccuse){			
 			System.out.println("ere");
 			board.winner = board.checkAccusation(createAccusation());
@@ -121,7 +128,7 @@ public class ComputerPlayer extends Player{
 			board.handleSuggestion(createSuggestion(),this);
 			enteredRoom = false;
 		}else{
-			board.calcTargets(location, board.rollDice());
+			board.calcTargets(location, board.getDiceRoll());
 			move(board,pickLocation());
 		}		
 	}

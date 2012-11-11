@@ -7,20 +7,30 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class InfoPanel extends JPanel{
+	JButton nextPlayer;
 
+	JButton makeAccusation;
+	JLabel turnLabel;
+	JLabel rollLabel;
+	JLabel rollValue;
+	JLabel guessLabel;
+	JLabel guess;
+	JLabel responseLabel;
+	JLabel response;
+	JTextField field;
 	public InfoPanel(Player player,Board board) {
-		JButton nextPlayer = new JButton("Next Player");
+		nextPlayer = new JButton("Next Player");
 		nextPlayer.addActionListener(new nextTurnAction(board));
-		JButton makeAccusation = new JButton("Make and Accusation");
-		JLabel turnLabel = new JLabel("Whose turn?");
-		JLabel rollLabel = new JLabel("Roll");
-		JLabel rollValue = new JLabel(String.valueOf(board.getDiceRoll()));
-		JLabel guessLabel = new JLabel("Guess");
-		JLabel guess = new JLabel ("o");
-		JLabel responseLabel = new JLabel("Response");
-		JLabel response = new JLabel("s");
+		makeAccusation = new JButton("Make and Accusation");
+		turnLabel = new JLabel("Whose turn?");
+		rollLabel = new JLabel("Roll");
+		rollValue = new JLabel(String.valueOf(board.getDiceRoll()));
+		guessLabel = new JLabel("Guess");
+		guess = new JLabel ("o");
+		responseLabel = new JLabel("Response");
+		response = new JLabel("s");
 		
-		JTextField field = new JTextField("player 1");
+		field = new JTextField(board.getPlayerList().get(0).getName());
 		
 		JPanel playerPanel = new JPanel();
 		JPanel diePanel = new JPanel();
@@ -58,7 +68,9 @@ public class InfoPanel extends JPanel{
 		}
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			board.nextTurn();			
+			board.nextTurn();
+			field.setText(board.getPlayerList().get(board.getCurTurn()).getName());
+			rollValue.setText(String.valueOf(board.getDiceRoll()));
 		}		
 	}
 	

@@ -9,31 +9,42 @@ import java.io.IOException;
 import javax.swing.*;
 
 public class ClueGame extends JFrame {
-	//did it work
+	//JMenuItem item;
+	DectiveNotePanel panel;
 	public ClueGame() {
 		int guiCompSize = 25;
 		Board board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt",guiCompSize);
-		
+		panel = new DectiveNotePanel(board);
 		JMenuBar menuBar = new JMenuBar();		
-		setSize(new Dimension(guiCompSize*board.getNumColumns()+150, guiCompSize*board.getNumRows()+180));
+		
 		setTitle("Clue");
 		
 		
 		
 		//getContentPane().add(board);		
 		//board.deal();
+		setLayout(new BorderLayout());
 		MyCardsPanel myCards = new MyCardsPanel(board.getPlayer(1));
 		InfoPanel info = new InfoPanel(board.getPlayer(1),board);
+		//myCards.setMinimumSize(new Dimension(150, guiCompSize*board.getNumRows()));
+		//info.setMinimumSize(new Dimension(guiCompSize*board.getNumColumns(),200));
+		//board.setMinimumSize(new Dimension(guiCompSize*board.getNumColumns(),guiCompSize*board.getNumRows()));
 		
-		setLayout(new BorderLayout());
 		add(board, BorderLayout.CENTER);
 		add(myCards, BorderLayout.EAST);
-		add(info, BorderLayout.PAGE_END);
+		add(info, BorderLayout.SOUTH);
+		
+		
+		
+		System.out.println(myCards.getWidth());
+		setSize(new Dimension(guiCompSize*board.getNumColumns()+120 , guiCompSize*board.getNumRows()+180));
+		//setSize(5,5);
 		
 		setJMenuBar(menuBar);
 		menuBar.add(createMenu(board));
 //		panel.setVisible(true);
 //		panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	//	pack();
 		
 	}
 	
@@ -47,8 +58,7 @@ public class ClueGame extends JFrame {
 	private JMenuItem createDetectivePanelItem(final Board board) {
 		JMenuItem item = new JMenuItem("Show Dective Panel");
 		class MenuItemListener implements ActionListener {
-			public void actionPerformed(ActionEvent e) {
-				DectiveNotePanel panel = new DectiveNotePanel(board);
+			public void actionPerformed(ActionEvent e) {				
 				panel.setVisible(true);
 			}
 		}
@@ -56,16 +66,16 @@ public class ClueGame extends JFrame {
 		return item;
 	}
 	private JMenuItem createFileExitItem() {
-		  JMenuItem item = new JMenuItem("Exit Program");
-		  class MenuItemListener implements ActionListener {
-		    public void actionPerformed(ActionEvent e)
-		    {
-		       System.exit(0);
-		    }
-		  }
-		  item.addActionListener(new MenuItemListener());
-		  return item;
+		JMenuItem item = new JMenuItem("Exit Program");
+		class MenuItemListener implements ActionListener {
+			public void actionPerformed(ActionEvent e)
+			{
+				System.exit(0);
+			}
 		}
+		item.addActionListener(new MenuItemListener());
+		return item;
+	}
 	
 	public static void main(String[] args) throws IOException, BadConfigFormatException {
 	//  Board board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");

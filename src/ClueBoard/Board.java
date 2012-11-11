@@ -66,23 +66,28 @@ public class Board extends JPanel{
 		calcAdjacencies();
 		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
+		rollDice();
 	}	
 	
 	public void nextTurn(){
 	//	System.out.println(players.get(curTurn).getColor());
 	//	printTargets();
 	//	System.out.println(players.get(curTurn).enteredRoom);
+		
 		if(!winner){
 		players.get(curTurn).takeTurn();
 			if(!winner){
 				curTurn = (curTurn+1)%players.size();
 			}
+		rollDice();
 		repaint();
+		
 		}else{
 			String win = "the solution was "+ solution.get(0).getCardName() +" in the " + solution.get(1).getCardName() + " with the " +solution.get(2).getCardName() ;
 			JOptionPane.showMessageDialog(null, win,players.get(curTurn).getName() + " wins",JOptionPane.PLAIN_MESSAGE);
 		}
 		System.out.println(unseenCards.size());
+		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -102,13 +107,15 @@ public class Board extends JPanel{
 			
 		}
 	}
-	
+	public int getCurTurn(){
+		return curTurn;
+	}
 	public int getDiceRoll(){
 		return diceRoll;
 	}
 	public int rollDice(){
 		Random randomGen = new Random();
-		diceRoll = randomGen.nextInt(5)+1;
+		diceRoll = randomGen.nextInt(6)+1;
 		return diceRoll;
 	}
 	public ArrayList<Card> getAllCards(){
