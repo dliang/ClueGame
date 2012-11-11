@@ -10,17 +10,20 @@ import javax.swing.*;
 
 public class ClueGame extends JFrame {
 	//did it work
-	public ClueGame() {		
+	public ClueGame() {
+		int guiCompSize = 25;
+		Board board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt",guiCompSize);
+		
 		JMenuBar menuBar = new JMenuBar();		
-		setSize(new Dimension(1000, 1000));
+		setSize(new Dimension(guiCompSize*board.getNumColumns()+150, guiCompSize*board.getNumRows()+180));
 		setTitle("Clue");
 		
 		
-		Board board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");
+		
 		//getContentPane().add(board);		
-		board.deal();
+		//board.deal();
 		MyCardsPanel myCards = new MyCardsPanel(board.getPlayer(1));
-		InfoPanel info = new InfoPanel(board.getPlayer(1));
+		InfoPanel info = new InfoPanel(board.getPlayer(1),board);
 		
 		setLayout(new BorderLayout());
 		add(board, BorderLayout.CENTER);

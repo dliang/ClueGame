@@ -20,7 +20,7 @@ public class BoardAdjTargetTests {
 	private static Board board;
 	@BeforeClass
 	public static void setUp() throws IOException, BadConfigFormatException {
-		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");
+		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt",1);
 	}
 	
 	

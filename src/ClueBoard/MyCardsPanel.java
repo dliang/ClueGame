@@ -14,7 +14,9 @@ public class MyCardsPanel extends JPanel{
 		JPanel peoplePanel = new JPanel();
 		JPanel roomPanel = new JPanel();
 		JPanel weaponPanel = new JPanel();
-		
+		peoplePanel.setLayout(new GridLayout(3, 1));
+		roomPanel.setLayout(new GridLayout(3, 1));
+		weaponPanel.setLayout(new GridLayout(3 , 1));
 		for (Card c : player.getMyCards()) {
 			if (c.getCardtype() == Card.CardType.PERSON)
 				peoplePanel.add(new JTextField(c.getCardName()));

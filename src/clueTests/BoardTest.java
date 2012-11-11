@@ -26,7 +26,7 @@ public class BoardTest {
 	
 	@BeforeClass
 	public static void initialize() throws FileNotFoundException, BadConfigFormatException {
-		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");
+		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt",1);
 		
 	}
 		

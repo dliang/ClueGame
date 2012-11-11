@@ -34,7 +34,7 @@ public class GameSetupTests {
 	
 	@BeforeClass
 	public static void setUp() throws IOException, BadConfigFormatException {
-		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt");
+		board = new Board("config.txt", "legend.txt", "players.txt", "cards.txt",1);
 
 		//person cards
 		profPlumCard = new Card("Professor Plum", ClueBoard.Card.CardType.PERSON);
@@ -79,16 +79,16 @@ public class GameSetupTests {
 	@Test
 	public void testLoadCards() {
 		//test deck size
-		Assert.assertEquals(21, board.getCards().size());
+		Assert.assertEquals(21, board.getAllCards().size());
 		
 		//check type of cards
 		int weapon_cards = 0, person_cards = 0, room_cards = 0;
-		for (int i = 0; i < board.getCards().size(); i++) {
-			if (board.getCards().get(i).getCardtype().equals(CardType.ROOM))
+		for (int i = 0; i < board.getAllCards().size(); i++) {
+			if (board.getAllCards().get(i).getCardtype().equals(CardType.ROOM))
 				room_cards++;
-			else if (board.getCards().get(i).getCardtype().equals(CardType.WEAPON))
+			else if (board.getAllCards().get(i).getCardtype().equals(CardType.WEAPON))
 				weapon_cards++;
-			else if (board.getCards().get(i).getCardtype().equals(CardType.PERSON))
+			else if (board.getAllCards().get(i).getCardtype().equals(CardType.PERSON))
 				person_cards++;
 		}
 		//check that the deck contains correct number of cards of each type
@@ -103,12 +103,12 @@ public class GameSetupTests {
 		int person_cnt = 0;
 		
 		
-		for (int i = 0; i < board.getCards().size(); i++) {
-			if (board.getCards().get(i).equals(knifeCard))
+		for (int i = 0; i < board.getAllCards().size(); i++) {
+			if (board.getAllCards().get(i).equals(knifeCard))
 				weapon_cnt++;
-			else if (board.getCards().get(i).equals(zooCard))
+			else if (board.getAllCards().get(i).equals(zooCard))
 				room_cnt++;
-			else if (board.getCards().get(i).equals(profPlumCard))
+			else if (board.getAllCards().get(i).equals(profPlumCard))
 				person_cnt++;	
 		}
 		Assert.assertEquals(1, weapon_cnt);
@@ -120,7 +120,7 @@ public class GameSetupTests {
 	@Test
 	public void testDealCards() {
 		//test all cards are dealt
-		board.deal();
+		//board.deal();
 		int total_cards = 0;
 		for (int i = 0; i < board.getPlayerList().size(); i++) {
 			total_cards += board.getPlayerList().get(i).getMyCards().size();
@@ -183,7 +183,7 @@ public class GameSetupTests {
 		// Run the test 100 times
 		for (int i=0; i<100; i++) {
 			board.calcTargets(board.calcIndex(6, 0), 2);
-			BoardCell selected = (BoardCell) test_player.pickLocation(board);
+			BoardCell selected = (BoardCell) test_player.pickLocation();
 
 			if (selected == board.getCellAt(board.calcIndex(4, 0)))
 				loc_4_0Tot++;

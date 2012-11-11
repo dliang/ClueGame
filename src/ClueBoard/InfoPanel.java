@@ -6,12 +6,12 @@ import javax.swing.*;
 
 public class InfoPanel extends JPanel{
 
-	public InfoPanel(Player player) {
+	public InfoPanel(Player player,Board board) {
 		JButton nextPlayer = new JButton("Next Player");
 		JButton makeAccusation = new JButton("Make and Accusation");
 		JLabel turnLabel = new JLabel("Whose turn?");
 		JLabel rollLabel = new JLabel("Roll");
-		JLabel rollValue = new JLabel("5");
+		JLabel rollValue = new JLabel(String.valueOf(board.getDiceRoll()));
 		JLabel guessLabel = new JLabel("Guess");
 		JLabel guess = new JLabel ("o");
 		JLabel responseLabel = new JLabel("Response");

@@ -29,7 +29,7 @@ public class Board extends JPanel{
 	private int numRows;
 	private int numColumns;
 	private int startPosition=-1;
-	private int GUI_COMP_SIZE = 30;
+	private int GUI_COMP_SIZE;
 	private int curTurn = 0;
 	private int diceRoll;
 
@@ -49,12 +49,14 @@ public class Board extends JPanel{
 	private ArrayList<Card> cards;
 	private ArrayList<Card> solution = new ArrayList<Card>();
 
-	public Board(String config, String legend, String people, String deck){
+	public Board(String config, String legend, String people, String deck,int compSize){
+		GUI_COMP_SIZE = compSize;
 		try{
 			loadConfigFiles(config,legend,people,deck);
 		}catch(Exception e){
 			System.out.println(e.getMessage());			
 		}
+		deal();
 		unseenCards = new ArrayList<Card>(allCards);
 		setBackground (Color.black); 
 		
@@ -62,10 +64,9 @@ public class Board extends JPanel{
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 	}	
 	
-	public int nextTurn(){
+	public void nextTurn(){
 		players.get(curTurn).takeTurn();
 		curTurn = (curTurn+1)%players.size();
-		return 0;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -97,6 +98,10 @@ public class Board extends JPanel{
 	public ArrayList<Card> getAllCards(){
 		return allCards;
 	}
+	public ArrayList<Card> getUnseenCards(){
+		return unseenCards;
+	}
+
 	public void loadConfigFiles(String config, String legend, String people, String deck) throws IOException, BadConfigFormatException {
 		rooms = new TreeMap<Character,String>();
 		cells = new ArrayList<BoardCell>();
@@ -163,10 +168,12 @@ public class Board extends JPanel{
 		in = new Scanner(reader);
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split("\\, ");
-			if (x == 0)
-				players.add(new HumanPlayer(line[0], line[1], Integer.parseInt(line[2])));
-			else
+			if (x == 0){
+				//players.add(new HumanPlayer(line[0], line[1], Integer.parseInt(line[2])));
 				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
+			}else{
+				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
+			}
 			x++;
 		}
 		reader.close();

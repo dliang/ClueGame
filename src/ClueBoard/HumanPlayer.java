@@ -7,6 +7,12 @@ public class HumanPlayer extends Player{
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public void takeTurn() {
+		// TODO Auto-generated method stub
+		
+	}
+
 //	public Card disproveSuggestion(Card person, Card room, Card weapon) {
 //		return new Card("", Card.CardType.WEAPON);
 //	}
