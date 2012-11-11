@@ -39,43 +39,17 @@ public class ComputerPlayer extends Player{
 			}
 		}
 		if(doorInRange.size() > 0){
-			System.out.println("we shouldnt be here");
 			Collections.shuffle(doorInRange);
 			return doorInRange.get(0);
 		}else{		
 			return tempTargets.get(0);
-		}
-		
-		/*
-		for(BoardCell b : tempTargets){
-		//	System.out.println(lastRoomVisited);
-			
-			if(b.isDoorway()){
-				if(((RoomCell)b).getRoomInitial() != lastRoomVisited){
-				//	System.out.println(((RoomCell)b).getRoomInitial() != lastRoomVisited);
-				//	System.out.println(((RoomCell)b).getRoomInitial());
-					doorInRange.add(b);
-				}
-			}
-		}
-		if(doorInRange.size() > 0){
-			//System.out.println("ere");
-			Collections.shuffle(doorInRange, new Random(seed));
-			return doorInRange.get(0);
-		}else{
-			Collections.shuffle(tempTargets, new Random(seed));
-			return tempTargets.get(0);
-		}
-		Collections.shuffle(tempTargets);
-		return tempTargets.get(0);
-		*/
-	
+		}	
 	}
 	public int getLocation() {
 		return location;
 	}
 	
-	public ArrayList<Card> createSuggestion() {
+	public ArrayList<Card> createAccusation() {
 		ArrayList<Card> suggestion = new ArrayList<Card>();	
 		ArrayList<Card> deck = board.getUnseenCards();
 		long seed = System.nanoTime();		
@@ -102,24 +76,47 @@ public class ComputerPlayer extends Player{
 		
 		return suggestion;
 	}
-	
-	/*
-	public void updateSeen() {
-		for (Card i : myCards) {
-			if (!seenCards.contains(i)) {
-				seenCards.add(i);
-				deck.remove(i);
-			}
+	public ArrayList<Card> createSuggestion() {
+		ArrayList<Card> suggestion = new ArrayList<Card>();	
+		ArrayList<Card> deck = board.getUnseenCards();
+		long seed = System.nanoTime();		
+		Collections.shuffle(deck, new Random(seed));
+		
+		
+		//put answer into solution, remove solution cards from deck 
+		int a = 0, b = 0, c = 0;
+		for (int i = 0; i < deck.size(); i++) {
+			if (deck.get(i).getCardtype() == Card.CardType.PERSON && a == 0) {
+				//System.out.println(deck.get(i).getCardName());
+				suggestion.add(deck.get(i));
+				for(Player p : board.getPlayerList()){
+					if(p.getName().equals(deck.get(i).getCardName())){
+						p.setLocation(location);
+						p.lastRoomVisited = lastRoomVisited;
+						break;
+					}
+				}
+				a++;
+			}else if (deck.get(i).getCardtype() == Card.CardType.WEAPON && c == 0) {
+				//System.out.println(deck.get(i).getCardName());
+				suggestion.add(deck.get(i));
+				c++;
+			} 			
 		}		
+		suggestion.add(new Card(board.getRooms().get(lastRoomVisited),CardType.ROOM));
+		for(Card ca : suggestion){
+			System.out.println(ca.getCardName());
+		}
+	//	System.out.println(suggestion.size());
+		return suggestion;
 	}
-	*/
 	
 	public void takeTurn(){
 		Random randomGen = new Random();
-		boolean jAccuse = 9.0/Math.pow(board.getUnseenCards().size(),2)>= randomGen.nextDouble();
-		if(false){			
-			
-			
+		boolean jAccuse = 27.0/Math.pow(board.getUnseenCards().size(),3)>= randomGen.nextDouble();
+		if(jAccuse){			
+			System.out.println("ere");
+			board.winner = board.checkAccusation(createAccusation());
 		}else if(enteredRoom){
 			board.handleSuggestion(createSuggestion(),this);
 			enteredRoom = false;

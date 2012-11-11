@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ClueBoard.Card.CardType;
 import ClueBoard.RoomCell.DoorDirection;
 
 
@@ -33,7 +34,7 @@ public class Board extends JPanel{
 	private int GUI_COMP_SIZE;
 	private int curTurn = 0;
 	private int diceRoll;
-
+	public boolean winner;
 	
 	private boolean[] seen;
 	private Map<Integer, LinkedList<Integer>> adjMtx = new HashMap<Integer, LinkedList<Integer>>();
@@ -71,9 +72,17 @@ public class Board extends JPanel{
 	//	System.out.println(players.get(curTurn).getColor());
 	//	printTargets();
 	//	System.out.println(players.get(curTurn).enteredRoom);
+		if(!winner){
 		players.get(curTurn).takeTurn();
-		curTurn = (curTurn+1)%players.size();
+			if(!winner){
+				curTurn = (curTurn+1)%players.size();
+			}
 		repaint();
+		}else{
+			String win = "the solution was "+ solution.get(0).getCardName() +" in the " + solution.get(1).getCardName() + " with the " +solution.get(2).getCardName() ;
+			JOptionPane.showMessageDialog(null, win,players.get(curTurn).getName() + " wins",JOptionPane.PLAIN_MESSAGE);
+		}
+		System.out.println(unseenCards.size());
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -242,73 +251,7 @@ public class Board extends JPanel{
 	public BoardCell getCellAt(int cell) {
 		return cells.get(cell);
 	}
-	
-	//calculate adjacency list for a specific cell
-	/*
-	public void calcAdjacencies(int row, int col){
-	
-		LinkedList<Integer> list = new LinkedList<Integer>();
-		adjMtx.put(calcIndex(row,col), list);
-		for(int i = 0; i <= 1; i++){
-			double testRow = row + java.lang.Math.pow(-1.0, i);
-			double testIndex = calcIndex(testRow, col);
-			if(testIndex != -1 && testIndex != startPosition && !path.contains(testIndex) && (cells.get((int) testIndex).isRoom() != true || cells.get((int) testIndex).isDoorway() == true)){
-				adjMtx.get(calcIndex(row,col)).add((int) testIndex);
-			}
-			
-		}
-		for(int j=0; j <=1 ; j++){
-			double testCol = col+ java.lang.Math.pow(-1.0, j);
-			if(testCol > col && col == numColumns - 1){
-				continue;
-			}else if(testCol < col && col == 0){
-				continue;
-			}
-			double testIndex = calcIndex(row, testCol);
-			if((testIndex != -1 && testIndex != startPosition && !path.contains(testIndex) && (cells.get((int) testIndex).isRoom() != true) || cells.get((int) testIndex).isDoorway() == true)){
-		
-				adjMtx.get(calcIndex(row,col)).add((int) testIndex);
-			}
-		}
-		
-		for(int r=0; r<list.size(); r++){
-			if(cells.get(calcIndex(row,col)).isDoorway()){
-				if(( (RoomCell) cells.get(calcIndex (row,col) )).getDoorDirection() == DoorDirection.UP){
-					if( getRowCol(list.get(r))[0] != col){
-						
-						list.remove(list.get(r));
-						r--;
-					}
-					
-				}
-				if(( (RoomCell) cells.get(calcIndex (row,col) )).getDoorDirection() == DoorDirection.LEFT){
-					if( getRowCol(list.get(r))[0] != col-1){
-						
-						list.remove(list.get(r));
-						r--;
-					}
-					
-				}
-				if(( (RoomCell) cells.get(calcIndex (row,col) )).getDoorDirection() == DoorDirection.RIGHT){
-					if( getRowCol(list.get(r))[0] != col-1){
-				
-						list.remove(list.get(r));
-						r--;
-					}
-					
-				}
-				if(( (RoomCell) cells.get(calcIndex (row,col) )).getDoorDirection() == DoorDirection.DOWN){
-					if( getRowCol(list.get(r))[0] != col){
-						
-						list.remove(list.get(r));
-						r--;
-					}
-					
-				}
-			}
-		}
-	}
-	*/
+
 	public void calcAdjacencies() {
 		LinkedList<Integer> tempList = new LinkedList<Integer>();
 		for (int i=0; i<numRows; i++){
@@ -386,51 +329,16 @@ public class Board extends JPanel{
 			System.out.println(calcIndex(b.getRow(),b.getCol()));
 		}
 	}
-/*
-	//calculate targets for given cell index and number of steps.
-	public void calcTargets(int position, int steps){
 
-		
-		path.push(position);
-		
-		//Record first position to test against starting on a door 
-		if(startPosition==-1){
-			startPosition=position;
-		}
-		
-		//Calc adjacencies first so that we can getAdjecencies
-		calcAdjacencies(getRowCol(position)[1], getRowCol(position)[0]);
-	
-		
-	
-		if (steps == 0) {
-			targets.add(position);
-			path.pop();
-			return;
-		}	
-		
-		
-		for (int i : adjMtx.get(position)) {
-			//If a doorway is found add it to targets
-			if (cells.get(i).isDoorway() && i!= startPosition) {
-				targets.add(i);
-			}
-			if (!cells.get(i).isRoom() && i != position && !path.contains(i) && i != path.elementAt(0)) {
-				calcTargets(i, steps - 1);
-			}
-		}
-		
-		path.pop();
-			
-	}
 	
 	//clears targets
 	public void clearTargets(){
 		targets.clear();
 	}
-	*/
+	
 	
 	public void calcTargets(int vertex, int steps) {
+		targets = new HashSet<BoardCell>();
 		int start = vertex;
 		targets = new HashSet<BoardCell>();
 		seen = new boolean[numRows*numColumns];
@@ -472,45 +380,8 @@ public class Board extends JPanel{
 		}
 	}
 	public Set<BoardCell> getTargets(){
-		/*
-		startPosition=-1;
-		Set<BoardCell> temp = new HashSet<BoardCell>();
-		//path.clear();
-		
-
-		
-		startPosition=-1;
-		for(int i:doorsFound){
-			targets.add(i);
-		}
-		
-		removed.clear();
-		doorsFound.clear();
-		for(int i:targets){
-			if(!cells.get(i).isRoom() || cells.get(i).isDoorway()){
-				temp.add(cells.get(i));
-			}
-		}
-		
-		
-		path.clear();
-		targets.clear();
-		return (HashSet<BoardCell>) temp;*/
 		return targets;
 	}
-	
-	//gets the adjacency list for a cell
-	/*
-	public LinkedList<Integer> getAdjList(int location){
-		//Check if tile is in a room
-		if(!cells.get(location).isDoorway() && cells.get(location).isRoom()){
-			LinkedList<Integer> temp = new LinkedList<Integer>();
-			return temp;
-		}
-		calcAdjacencies(getRowCol(location)[1],getRowCol(location)[0]);
-		return adjMtx.get(location);
-	}
-	*/
 	public LinkedList<Integer> getAdjList(int index) {
 		LinkedList<Integer> a = new LinkedList<Integer> (adjLST.get(index));
 		return a;
@@ -541,24 +412,31 @@ public class Board extends JPanel{
 		allCards = new ArrayList<Card>(cards);
 		
 		//put answer into solution, remove solution cards from deck 
-		int a = 0, b = 0, c = 0;
+		//int a = 0, b = 0, c = 0;
+		
 		for (int i = 0; i < cards.size(); i++) {
-			if (cards.get(i).getCardtype() == Card.CardType.PERSON && a == 0) {
-				System.out.println(cards.get(i).getCardName());
+			if(cards.get(i).cardtype == CardType.PERSON){
 				solution.add(cards.get(i));
-				cards.remove(i);
-				a++;
-			} else if (cards.get(i).getCardtype() == Card.CardType.ROOM && b == 0) {
-				System.out.println(cards.get(i).getCardName());
+				cards.remove(cards.get(i));
+				break;
+			}
+		}
+		for (int i = 0; i < cards.size(); i++) {
+			if(cards.get(i).cardtype == CardType.ROOM){
 				solution.add(cards.get(i));
-				cards.remove(i);
-				b++;
-			} else if (cards.get(i).getCardtype() == Card.CardType.WEAPON && c == 0) {
-				System.out.println(cards.get(i).getCardName());
+				cards.remove(cards.get(i));
+				break;
+			}
+		}
+		for (int i = 0; i < cards.size(); i++) {
+			if(cards.get(i).cardtype == CardType.WEAPON){
 				solution.add(cards.get(i));
-				cards.remove(i);
-				c++;
-			} 
+				cards.remove(cards.get(i));
+				break;
+			}
+		}
+		for(Card c : solution){
+			System.out.println(c.getCardName());
 		}
 		String person = "";
 		String room = "";
@@ -608,6 +486,15 @@ public class Board extends JPanel{
 			return true;
 		return false;
 	}
+	public boolean checkAccusation(ArrayList<Card> accusation){
+		for(Card c : accusation){
+			if(!solution.contains(c)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	
 	public Card handleSuggestion(ArrayList<Card> suggestion,Player suggester) {
 		
