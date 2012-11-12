@@ -54,8 +54,13 @@ public class RoomCell extends BoardCell {
 	public DoorDirection getDoorDirection() {
 		return doorDirection;
 	}
-	public void draw(Graphics g,int size) {
-		g.setColor(Color.GRAY);
+	public void draw(Graphics g,int size,boolean playerTurn) {
+		if(playerTurn){
+			g.setColor(Color.cyan);
+		}else{
+			g.setColor(Color.GRAY);
+		}
+		
 		g.fillRect(column*size,row*size,size,size);
 		g.setColor(Color.BLUE);
 		switch(doorDirection){

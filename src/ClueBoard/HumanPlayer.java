@@ -1,14 +1,19 @@
 package ClueBoard;
 
 public class HumanPlayer extends Player{
-
-	public HumanPlayer(String name, String color, int location) {
+	Board board;
+	public HumanPlayer(String name, String color, int location,Board board) {
 		super(name, color, location);
+		this.board = board;
+	
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void takeTurn() {
+		board.calcTargets(location, board.getDiceRoll());
+		board.playerTurn = true;
+		board.repaint();
 		// TODO Auto-generated method stub
 		
 	}

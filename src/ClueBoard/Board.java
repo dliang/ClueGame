@@ -30,19 +30,16 @@ public class Board extends JPanel{
 	private Map<Character, String> rooms;
 	private int numRows;
 	private int numColumns;
-	private int startPosition=-1;
 	private int GUI_COMP_SIZE;
 	private int curTurn = 0;
 	private int diceRoll;
 	public boolean winner;
-	
+	private Card theReturn;
+	private ArrayList<Card> suggestion;	
 	private boolean[] seen;
-	private Map<Integer, LinkedList<Integer>> adjMtx = new HashMap<Integer, LinkedList<Integer>>();
-	private Stack<Integer> path = new Stack<Integer>();
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
-	private Stack<Integer> doorsFound = new Stack<Integer>();
-	private Stack<Integer> removed = new Stack<Integer>();
-	
+	public boolean playerTurn = true;
+	private boolean notFirst;
 	//*********************************************************
 	private Solution sol;
 	private ArrayList<Player> players;
@@ -67,36 +64,40 @@ public class Board extends JPanel{
 		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 		rollDice();
+		suggestion = new ArrayList<Card>();
+		players.get(0).takeTurn();
 	}	
 	
 	public void nextTurn(){
-	//	System.out.println(players.get(curTurn).getColor());
-	//	printTargets();
-	//	System.out.println(players.get(curTurn).enteredRoom);
-		
-		if(!winner){
-		players.get(curTurn).takeTurn();
+	//	if(notFirst){
+			
+			suggestion.clear();
+			theReturn = null;
 			if(!winner){
 				curTurn = (curTurn+1)%players.size();
+				players.get(curTurn).takeTurn();				
+			//	rollDice();
+			}else{
+				String win = "the solution was "+ solution.get(0).getCardName() +" in the " + solution.get(1).getCardName() + " with the " +solution.get(2).getCardName() ;
+				JOptionPane.showMessageDialog(null, win,players.get(curTurn).getName() + " wins",JOptionPane.PLAIN_MESSAGE);
 			}
-		rollDice();
-		repaint();
-		
-		}else{
-			String win = "the solution was "+ solution.get(0).getCardName() +" in the " + solution.get(1).getCardName() + " with the " +solution.get(2).getCardName() ;
-			JOptionPane.showMessageDialog(null, win,players.get(curTurn).getName() + " wins",JOptionPane.PLAIN_MESSAGE);
+	/*	}else{
+			notFirst = true;
+			calcTargets(players.get(0).getLocation(),diceRoll);
+			repaint();
 		}
-		System.out.println(unseenCards.size());
-		
+		System.out.println(unseenCards.size());		*/
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for(BoardCell b : cells){
 		//	System.out.println("ere");
-			b.draw(g,GUI_COMP_SIZE);
+			b.draw(g,GUI_COMP_SIZE,false);
 		}
-		
+		for(BoardCell b : targets){
+			b.draw(g, GUI_COMP_SIZE,playerTurn);
+		}
 		for(Player p : players) {
 			p.draw(g, GUI_COMP_SIZE, numColumns);
 		}
@@ -104,8 +105,17 @@ public class Board extends JPanel{
 		for (BoardCell b : cells) {
 			if (b.isNameCell())
 				g.drawString(rooms.get(((RoomCell)b).getRoomInitial()), b.getCol() * GUI_COMP_SIZE, b.getRow()*GUI_COMP_SIZE);
-			
 		}
+		
+	}
+	public int getGuiCompSize(){
+		return GUI_COMP_SIZE;
+	}
+	public Card getReturnCard(){
+		return theReturn;
+	}
+	public ArrayList<Card> getSuggestion(){
+		return suggestion;
 	}
 	public int getCurTurn(){
 		return curTurn;
@@ -192,8 +202,8 @@ public class Board extends JPanel{
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split("\\, ");
 			if (x == 0){
-				//players.add(new HumanPlayer(line[0], line[1], Integer.parseInt(line[2])));
-				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
+				players.add(new HumanPlayer(line[0], line[1], Integer.parseInt(line[2]),this));
+				//players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
 			}else{
 				players.add(new ComputerPlayer(line[0], line[1], Integer.parseInt(line[2]), getCellAt(Integer.parseInt(line[2])),this));
 			}
@@ -494,18 +504,31 @@ public class Board extends JPanel{
 		return false;
 	}
 	public boolean checkAccusation(ArrayList<Card> accusation){
+		boolean state = true;
+		String acc = "the accusation cosists of: ";
+		for(Card c : accusation){
+			acc = acc +  c.getCardName() + ", ";
+		}
 		for(Card c : accusation){
 			if(!solution.contains(c)){
-				return false;
+				
+				state =  false;
 			}
 		}
-		return true;
+		acc = acc +"this accusation";
+		if(state){
+			acc = acc + " is correct";
+		}else{
+			acc = acc + " is incorrect";
+		}
+		JOptionPane.showMessageDialog(null, acc,"An accusation was made",JOptionPane.PLAIN_MESSAGE);
+		
+		return state;
 	}
 	
 	
-	public Card handleSuggestion(ArrayList<Card> suggestion,Player suggester) {
-		
-		
+	public Card handleSuggestion(ArrayList<Card> suggestion,Player suggester) {	
+		this.suggestion = suggestion;
 		ArrayList<Player> tempPlayers = new ArrayList<Player>(players);
 		ArrayList<Card> possibleReturns = new ArrayList<Card>();
 		tempPlayers.remove(suggester);
@@ -523,6 +546,7 @@ public class Board extends JPanel{
 			if(possibleReturns.size() >0){
 				Collections.shuffle(possibleReturns);
 				unseenCards.remove(possibleReturns.get(0));
+				theReturn = possibleReturns.get(0);
 				return possibleReturns.get(0);
 			}
 		}

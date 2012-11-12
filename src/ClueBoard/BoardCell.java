@@ -44,6 +44,6 @@ public abstract class BoardCell {
 		column = c;
 	}
 	
-	public abstract void draw(Graphics g, int size);
+	public abstract void draw(Graphics g, int size,boolean playerTurn);
 	
 }

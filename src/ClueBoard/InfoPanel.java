@@ -1,8 +1,11 @@
 package ClueBoard;
 
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.*;
 
@@ -21,14 +24,14 @@ public class InfoPanel extends JPanel{
 	public InfoPanel(Player player,Board board) {
 		nextPlayer = new JButton("Next Player");
 		nextPlayer.addActionListener(new nextTurnAction(board));
-		makeAccusation = new JButton("Make and Accusation");
+		makeAccusation = new JButton("Make an Accusation");
 		turnLabel = new JLabel("Whose turn?");
 		rollLabel = new JLabel("Roll");
 		rollValue = new JLabel(String.valueOf(board.getDiceRoll()));
-		guessLabel = new JLabel("Guess");
-		guess = new JLabel ("o");
-		responseLabel = new JLabel("Response");
-		response = new JLabel("s");
+		guessLabel = new JLabel();
+		guess = new JLabel ("");
+		responseLabel = new JLabel();
+		response = new JLabel("");
 		
 		field = new JTextField(board.getPlayerList().get(0).getName());
 		
@@ -61,17 +64,40 @@ public class InfoPanel extends JPanel{
 		add(guessPanel);
 		add(resultPanel);
 		
-	}private class nextTurnAction implements ActionListener{
+	}
+	private class nextTurnAction implements ActionListener{
 		public Board board;
 		public nextTurnAction(Board board){
 			this.board = board;
 		}
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			if(!board.playerTurn){
+			board.rollDice();
 			board.nextTurn();
+			if(board.playerTurn){
+				if(board.getPlayerList().get(0).enteredRoom){
+					//create suggestion panel here
+				}
+			}
 			field.setText(board.getPlayerList().get(board.getCurTurn()).getName());
 			rollValue.setText(String.valueOf(board.getDiceRoll()));
+			if(board.getReturnCard() != null){
+				response.setText(board.getReturnCard().getCardName());
+			}else{
+				response.setText("no new clue");
+			}
+			String sugg = "";
+			for(Card c : board.getSuggestion()){
+				sugg = sugg + c.getCardName()+", ";
+			}
+			guess.setText(sugg);
+			}else{
+				JOptionPane.showMessageDialog(null, "either make an accusation or move","Finish your turn",JOptionPane.PLAIN_MESSAGE);
+			}
+			//
 		}		
 	}
+	
 	
 }

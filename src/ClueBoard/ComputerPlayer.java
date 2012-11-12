@@ -120,7 +120,7 @@ public class ComputerPlayer extends Player{
 			myUnseenCards.remove(asd);
 		}
 		Random randomGen = new Random();
-		boolean jAccuse = 27.0/Math.pow(myUnseenCards.size(),3) >= randomGen.nextDouble();
+		boolean jAccuse = 729.0/Math.pow(myUnseenCards.size(),6) >= randomGen.nextDouble();
 		if(jAccuse){			
 			System.out.println("ere");
 			board.winner = board.checkAccusation(createAccusation());
@@ -130,6 +130,8 @@ public class ComputerPlayer extends Player{
 		}else{
 			board.calcTargets(location, board.getDiceRoll());
 			move(board,pickLocation());
-		}		
+			
+		}
+		board.repaint();
 	}
 }
