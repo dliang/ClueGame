@@ -61,7 +61,7 @@ public class Board extends JPanel{
 		unseenCards = new ArrayList<Card>(allCards);
 		setBackground (Color.black); 
 		calcAdjacencies();
-		String splash = "You are playing as " + players.get(0).getName() + " press next player to begin play";
+		String splash = "You are playing as " + players.get(0).getName() + " you may play when ready";
 		JOptionPane.showMessageDialog(null, splash,"Welcome to Clue",JOptionPane.PLAIN_MESSAGE);
 		rollDice();
 		suggestion = new ArrayList<Card>();
