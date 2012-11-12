@@ -94,7 +94,7 @@ public class ComputerPlayer extends Player{
 				suggestion.add(deck.get(i));
 				for(Player p : board.getPlayerList()){
 					if(p.getName().equals(deck.get(i).getCardName())){
-						p.setLocation(location);
+						p.move(board,board.getCellAt(location));
 						p.lastRoomVisited = lastRoomVisited;
 						break;
 					}
@@ -122,7 +122,6 @@ public class ComputerPlayer extends Player{
 		Random randomGen = new Random();
 		boolean jAccuse = 729.0/Math.pow(myUnseenCards.size(),6) >= randomGen.nextDouble();
 		if(jAccuse){			
-			System.out.println("ere");
 			board.winner = board.checkAccusation(createAccusation());
 		}else if(enteredRoom){
 			board.handleSuggestion(createSuggestion(),this);

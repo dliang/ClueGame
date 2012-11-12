@@ -94,7 +94,10 @@ public class ClueGame extends JFrame {
 					board.getTargets().clear();
 					board.playerTurn = false;
 					board.repaint();
-				}				
+				}else{
+					JOptionPane.showMessageDialog(null, "they are highlighted in lovely cyan, please do not confuse miss peacock with a valid movement square, despite her reputation","Select a valid target to move to",JOptionPane.PLAIN_MESSAGE);
+
+				}
 			}
 		}
 

@@ -39,7 +39,6 @@ public class Board extends JPanel{
 	private boolean[] seen;
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	public boolean playerTurn = true;
-	private boolean notFirst;
 	//*********************************************************
 	private Solution sol;
 	private ArrayList<Player> players;
@@ -69,8 +68,7 @@ public class Board extends JPanel{
 	}	
 	
 	public void nextTurn(){
-	//	if(notFirst){
-			
+
 			suggestion.clear();
 			theReturn = null;
 			if(!winner){
@@ -81,12 +79,6 @@ public class Board extends JPanel{
 				String win = "the solution was "+ solution.get(0).getCardName() +" in the " + solution.get(1).getCardName() + " with the " +solution.get(2).getCardName() ;
 				JOptionPane.showMessageDialog(null, win,players.get(curTurn).getName() + " wins",JOptionPane.PLAIN_MESSAGE);
 			}
-	/*	}else{
-			notFirst = true;
-			calcTargets(players.get(0).getLocation(),diceRoll);
-			repaint();
-		}
-		System.out.println(unseenCards.size());		*/
 	}
 	
 	public void paintComponent(Graphics g) {
